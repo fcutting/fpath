@@ -17,8 +17,14 @@ func newBufferedRuneReader(input string) (brr *bufferedRuneReader) {
 
 // Get returns the rune at the current index of the input and increments the
 // index.
-func (brr *bufferedRuneReader) Get() (r rune) {
+func (brr *bufferedRuneReader) get() (r rune) {
 	r = brr.input[brr.index]
 	brr.index++
 	return r
+}
+
+// Peek returns the rune at the current index of the input but doesn't
+// increment the index.
+func (brr *bufferedRuneReader) peek() (r rune) {
+	return brr.input[brr.index]
 }
