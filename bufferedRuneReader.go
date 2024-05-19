@@ -25,6 +25,6 @@ func (tr *tokenReader) getRune() (r rune) {
 
 // Peek returns the rune at the current index of the input but doesn't
 // increment the index.
-func (tr *tokenReader) peek() (r rune) {
+func (tr *tokenReader) peekRune() (r rune) {
 	return tr.input[tr.index]
 }

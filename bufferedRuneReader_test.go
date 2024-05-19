@@ -20,7 +20,7 @@ func Test_bufferedRuneReader_peek(t *testing.T) {
 	expected := 'h'
 	tr := newTokenReader(input)
 	for i := 0; i < 10; i++ {
-		r := tr.peek()
+		r := tr.peekRune()
 		if r != expected {
 			t.Fatalf("Unexpected rune\nExpected: %q\nActual: %q", expected, r)
 		}
