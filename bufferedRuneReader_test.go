@@ -8,7 +8,7 @@ func Test_bufferedRuneReader_get(t *testing.T) {
 	tr := newTokenReader(input)
 
 	for i, expected := range expectedRunes {
-		r := tr.get()
+		r := tr.getRune()
 		if r != expected {
 			t.Fatalf("Unexpected rune at position %d\nExpected: %q\n Actual: %q", i, expected, r)
 		}

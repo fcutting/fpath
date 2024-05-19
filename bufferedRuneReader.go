@@ -17,7 +17,7 @@ func newTokenReader(input string) (tr *tokenReader) {
 
 // Get returns the rune at the current index of the input and increments the
 // index.
-func (tr *tokenReader) get() (r rune) {
+func (tr *tokenReader) getRune() (r rune) {
 	r = tr.input[tr.index]
 	tr.index++
 	return r
