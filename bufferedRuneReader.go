@@ -9,25 +9,25 @@ import (
 )
 
 const (
-	TokenType_Undefined = iota
-	TokenType_Number
-	TokenType_Label
-	TokenType_StringLiteral
-	TokenType_Not
-	TokenType_Equals
-	TokenType_Contains
-	TokenType_Greater
-	TokenType_Lesser
+	tokenType_Undefined = iota
+	tokenType_Number
+	tokenType_Label
+	tokenType_StringLiteral
+	tokenType_Not
+	tokenType_Equals
+	tokenType_Contains
+	tokenType_Greater
+	tokenType_Lesser
 )
 
 var UnexpectedEOF = errors.New("Unexpected EOF")
 
 var keywords = map[string]int{
-	"not":      TokenType_Not,
-	"equals":   TokenType_Equals,
-	"contains": TokenType_Contains,
-	"greater":  TokenType_Greater,
-	"lesser":   TokenType_Lesser,
+	"not":      tokenType_Not,
+	"equals":   tokenType_Equals,
+	"contains": tokenType_Contains,
+	"greater":  tokenType_Greater,
+	"lesser":   tokenType_Lesser,
 }
 
 func isLabelRune(r rune) bool {
@@ -115,7 +115,7 @@ func (tr *tokenReader) getToken() (tok token, err error) {
 // If the token reaches the end of the string, getTokenNumber also returns an
 // io.EOF error.
 func (tr *tokenReader) getTokenNumber() (tok token, err error) {
-	tok.typ = TokenType_Number
+	tok.typ = tokenType_Number
 	var r rune
 
 	for {
@@ -139,7 +139,7 @@ func (tr *tokenReader) getTokenNumber() (tok token, err error) {
 // If the token reaches the end of the string, getTokenLabel also returns an
 // io.EOF error.
 func (tr *tokenReader) getTokenLabel() (tok token, err error) {
-	tok.typ = TokenType_Label
+	tok.typ = tokenType_Label
 	var r rune
 
 	for {
@@ -172,7 +172,7 @@ func (tr *tokenReader) getTokenLabel() (tok token, err error) {
 // If the token reaches the end of the string, getTokenStringLiteral returns an
 // UnexpectedEOF error.
 func (tr *tokenReader) getTokenStringLiteral() (tok token, err error) {
-	tok.typ = TokenType_StringLiteral
+	tok.typ = tokenType_StringLiteral
 	var r rune
 
 	for {

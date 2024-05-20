@@ -140,55 +140,55 @@ func Test_tokenReader_getToken(t *testing.T) {
 		"Whitespace": {
 			input: "  123  ",
 			expectedTokens: []token{
-				{typ: TokenType_Number, value: "123"},
+				{typ: tokenType_Number, value: "123"},
 			},
 		},
 		"Number": {
 			input: "123",
 			expectedTokens: []token{
-				{typ: TokenType_Number, value: "123"},
+				{typ: tokenType_Number, value: "123"},
 			},
 		},
 		"Label": {
 			input: "fletcher",
 			expectedTokens: []token{
-				{typ: TokenType_Label, value: "fletcher"},
+				{typ: tokenType_Label, value: "fletcher"},
 			},
 		},
 		"StringLiteral": {
 			input: `"hello world"`,
 			expectedTokens: []token{
-				{typ: TokenType_StringLiteral, value: "hello world"},
+				{typ: tokenType_StringLiteral, value: "hello world"},
 			},
 		},
 		"Keyword Not": {
 			input: "not",
 			expectedTokens: []token{
-				{typ: TokenType_Not},
+				{typ: tokenType_Not},
 			},
 		},
 		"Keyword Equals": {
 			input: "equals",
 			expectedTokens: []token{
-				{typ: TokenType_Equals},
+				{typ: tokenType_Equals},
 			},
 		},
 		"Keyword Contains": {
 			input: "contains",
 			expectedTokens: []token{
-				{typ: TokenType_Contains},
+				{typ: tokenType_Contains},
 			},
 		},
 		"Keyword Greater": {
 			input: "greater",
 			expectedTokens: []token{
-				{typ: TokenType_Greater},
+				{typ: tokenType_Greater},
 			},
 		},
 		"Keyword Lesser": {
 			input: "lesser",
 			expectedTokens: []token{
-				{typ: TokenType_Lesser},
+				{typ: tokenType_Lesser},
 			},
 		},
 	}
@@ -219,7 +219,7 @@ func Test_tokenReader_getToken(t *testing.T) {
 func Test_tokenReader_getToken_EOF(t *testing.T) {
 	input := "  123  "
 	expected := token{
-		typ:   TokenType_Number,
+		typ:   tokenType_Number,
 		value: "123",
 	}
 	tr := newTokenReader(input)
@@ -248,7 +248,7 @@ func Test_tokenReader_getToken_EOF(t *testing.T) {
 func Test_tokenReader_getToken_InvalidRune(t *testing.T) {
 	input := "  123  `"
 	expected := token{
-		typ:   TokenType_Number,
+		typ:   tokenType_Number,
 		value: "123",
 	}
 	tr := newTokenReader(input)
