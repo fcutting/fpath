@@ -13,11 +13,13 @@ const (
 	TokenType_Label
 	TokenType_Not
 	TokenType_Equals
+	TokenType_Contains
 )
 
 var keywords = map[string]int{
-	"not":    TokenType_Not,
-	"equals": TokenType_Equals,
+	"not":      TokenType_Not,
+	"equals":   TokenType_Equals,
+	"contains": TokenType_Contains,
 }
 
 func isLabelRune(r rune) bool {
