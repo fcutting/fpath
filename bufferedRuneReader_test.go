@@ -2,7 +2,7 @@ package fpath
 
 import "testing"
 
-func Test_bufferedRuneReader_get(t *testing.T) {
+func Test_tokenReader_get(t *testing.T) {
 	input := "hello world"
 	expectedRunes := []rune{'h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd'}
 	tr := newTokenReader(input)
@@ -15,7 +15,7 @@ func Test_bufferedRuneReader_get(t *testing.T) {
 	}
 }
 
-func Test_bufferedRuneReader_peek(t *testing.T) {
+func Test_tokenReader_peek(t *testing.T) {
 	input := "hello world"
 	expected := 'h'
 	tr := newTokenReader(input)
