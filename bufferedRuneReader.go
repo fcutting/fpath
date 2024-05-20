@@ -1,7 +1,9 @@
 package fpath
 
 import (
+	"fmt"
 	"io"
+	"unicode"
 )
 
 const (
@@ -49,4 +51,54 @@ func (tr *tokenReader) peekRune() (r rune, err error) {
 	}
 
 	return tr.input[tr.index], nil
+}
+
+// getToken returns the next token in the input string.
+// At the end of the input string, getToken returns an io.EOF error.
+func (tr *tokenReader) getToken() (tok token, err error) {
+	var r rune
+
+	for {
+		r, err = tr.peekRune()
+
+		if err != nil {
+			return tok, err
+		}
+
+		if unicode.IsSpace(r) {
+			tr.index++
+			continue
+		}
+
+		if unicode.IsNumber(r) {
+			return tr.getTokenNumber()
+		}
+
+		err = fmt.Errorf("Invalid rune %q", r)
+		return
+	}
+}
+
+// getTokenNumber returns the current number token in the input string.
+// If the token reaches the end of the string, getTokenNumber also returns an
+// io.EOF error.
+func (tr *tokenReader) getTokenNumber() (tok token, err error) {
+	tok.typ = TokenType_Number
+	var r rune
+
+	for {
+		r, err = tr.peekRune()
+
+		if err != nil {
+			return tok, err
+		}
+
+		if unicode.IsNumber(r) {
+			tr.index++
+			tok.value += string(r)
+			continue
+		}
+
+		return tok, nil
+	}
 }
