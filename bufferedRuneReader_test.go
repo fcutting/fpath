@@ -191,6 +191,18 @@ func Test_tokenReader_getToken(t *testing.T) {
 				{typ: tokenType_Lesser},
 			},
 		},
+		"OpenParan": {
+			input: "(",
+			expectedTokens: []token{
+				{typ: tokenType_OpenParan},
+			},
+		},
+		"CloseParan": {
+			input: ")",
+			expectedTokens: []token{
+				{typ: tokenType_CloseParan},
+			},
+		},
 	}
 
 	for name, tc := range testCases {

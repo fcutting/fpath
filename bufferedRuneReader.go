@@ -18,6 +18,8 @@ const (
 	tokenType_Contains
 	tokenType_Greater
 	tokenType_Lesser
+	tokenType_OpenParan
+	tokenType_CloseParan
 )
 
 var UnexpectedEOF = errors.New("Unexpected EOF")
@@ -101,13 +103,24 @@ func (tr *tokenReader) getToken() (tok token, err error) {
 			return tr.getTokenLabel()
 		}
 
-		if r == '"' {
+		switch r {
+		case '"':
 			tr.index++
 			return tr.getTokenStringLiteral()
+		case '(':
+			tr.index++
+			return token{
+				typ: tokenType_OpenParan,
+			}, nil
+		case ')':
+			tr.index++
+			return token{
+				typ: tokenType_CloseParan,
+			}, nil
+		default:
+			err = fmt.Errorf("Invalid rune %q", r)
+			return
 		}
-
-		err = fmt.Errorf("Invalid rune %q", r)
-		return
 	}
 }
 
