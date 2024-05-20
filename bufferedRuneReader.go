@@ -1,6 +1,7 @@
 package fpath
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -11,12 +12,15 @@ const (
 	TokenType_Undefined = iota
 	TokenType_Number
 	TokenType_Label
+	TokenType_StringLiteral
 	TokenType_Not
 	TokenType_Equals
 	TokenType_Contains
 	TokenType_Greater
 	TokenType_Lesser
 )
+
+var UnexpectedEOF = errors.New("Unexpected EOF")
 
 var keywords = map[string]int{
 	"not":      TokenType_Not,
@@ -97,6 +101,11 @@ func (tr *tokenReader) getToken() (tok token, err error) {
 			return tr.getTokenLabel()
 		}
 
+		if r == '"' {
+			tr.index++
+			return tr.getTokenStringLiteral()
+		}
+
 		err = fmt.Errorf("Invalid rune %q", r)
 		return
 	}
@@ -156,4 +165,30 @@ func (tr *tokenReader) getTokenLabel() (tok token, err error) {
 	}
 
 	return tok, err
+}
+
+// getTokenStringLiteral returns the current string literal token in the input
+// string.
+// If the token reaches the end of the string, getTokenStringLiteral returns an
+// UnexpectedEOF error.
+func (tr *tokenReader) getTokenStringLiteral() (tok token, err error) {
+	tok.typ = TokenType_StringLiteral
+	var r rune
+
+	for {
+		r, err = tr.getRune()
+
+		if err != nil {
+			err = UnexpectedEOF
+			return
+		}
+
+		if r == '"' {
+			break
+		}
+
+		tok.value += string(r)
+	}
+
+	return tok, nil
 }

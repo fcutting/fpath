@@ -155,6 +155,12 @@ func Test_tokenReader_getToken(t *testing.T) {
 				{typ: TokenType_Label, value: "fletcher"},
 			},
 		},
+		"StringLiteral": {
+			input: `"hello world"`,
+			expectedTokens: []token{
+				{typ: TokenType_StringLiteral, value: "hello world"},
+			},
+		},
 		"Keyword Not": {
 			input: "not",
 			expectedTokens: []token{
@@ -262,6 +268,19 @@ func Test_tokenReader_getToken_InvalidRune(t *testing.T) {
 	}
 
 	_, err = tr.getToken()
+
+	if err == nil {
+		t.Fatalf("Error expected but not returned")
+	}
+
+	snaps.MatchSnapshot(t, err.Error())
+}
+
+func Test_tokenReader_getTokenStringLiteral_UnexpectedEOF(t *testing.T) {
+	input := `"hello `
+	tr := newTokenReader(input)
+
+	_, err := tr.getToken()
 
 	if err == nil {
 		t.Fatalf("Error expected but not returned")
