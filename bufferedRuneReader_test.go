@@ -5,6 +5,51 @@ import (
 	"testing"
 )
 
+func Test_isLabelRune(t *testing.T) {
+	testCases := map[string]struct {
+		r        rune
+		expected bool
+	}{
+		"1": {
+			r:        '1',
+			expected: true,
+		},
+		"f": {
+			r:        'f',
+			expected: true,
+		},
+		"_": {
+			r:        '_',
+			expected: true,
+		},
+		"$": {
+			r:        '$',
+			expected: false,
+		},
+		"-": {
+			r:        '-',
+			expected: false,
+		},
+		"Tab": {
+			r:        '\t',
+			expected: false,
+		},
+		"Space": {
+			r:        ' ',
+			expected: false,
+		},
+	}
+
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			result := isLabelRune(tc.r)
+			if result != tc.expected {
+				t.Fatalf("Unexpected result\nExpected: %v\nActual: %v", tc.expected, result)
+			}
+		})
+	}
+}
+
 func Test_tokenReader_getRune(t *testing.T) {
 	input := "hello world"
 	expectedRunes := []rune{'h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd'}

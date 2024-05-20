@@ -9,7 +9,12 @@ import (
 const (
 	TokenType_Undefined = iota
 	TokenType_Number
+	TokenType_Label
 )
+
+func isLabelRune(r rune) bool {
+	return unicode.IsNumber(r) || unicode.IsLetter(r) || r == '_'
+}
 
 type token struct {
 	typ   int
