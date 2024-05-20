@@ -155,6 +155,12 @@ func Test_tokenReader_getToken(t *testing.T) {
 				{typ: TokenType_Label, value: "fletcher"},
 			},
 		},
+		"Keyword Not": {
+			input: "not",
+			expectedTokens: []token{
+				{typ: TokenType_Not},
+			},
+		},
 	}
 
 	for name, tc := range testCases {

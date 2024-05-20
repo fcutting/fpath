@@ -3,6 +3,7 @@ package fpath
 import (
 	"fmt"
 	"io"
+	"strings"
 	"unicode"
 )
 
@@ -10,7 +11,12 @@ const (
 	TokenType_Undefined = iota
 	TokenType_Number
 	TokenType_Label
+	TokenType_Not
 )
+
+var keywords = map[string]int{
+	"not": TokenType_Not,
+}
 
 func isLabelRune(r rune) bool {
 	return unicode.IsNumber(r) || unicode.IsLetter(r) || r == '_'
@@ -123,7 +129,7 @@ func (tr *tokenReader) getTokenLabel() (tok token, err error) {
 		r, err = tr.peekRune()
 
 		if err != nil {
-			return tok, err
+			break
 		}
 
 		if isLabelRune(r) {
@@ -132,6 +138,14 @@ func (tr *tokenReader) getTokenLabel() (tok token, err error) {
 			continue
 		}
 
-		return tok, nil
+		break
 	}
+
+	if key, ok := keywords[strings.ToLower(tok.value)]; ok {
+		return token{
+			typ: key,
+		}, nil
+	}
+
+	return tok, err
 }
