@@ -161,6 +161,12 @@ func Test_tokenReader_getToken(t *testing.T) {
 				{typ: TokenType_Not},
 			},
 		},
+		"Keyword Equals": {
+			input: "equals",
+			expectedTokens: []token{
+				{typ: TokenType_Equals},
+			},
+		},
 	}
 
 	for name, tc := range testCases {
