@@ -147,6 +147,12 @@ func Test_tokenReader_getToken(t *testing.T) {
 				{typ: TokenType_Number, value: "123"},
 			},
 		},
+		"Label": {
+			input: "fletcher",
+			expectedTokens: []token{
+				{typ: TokenType_Label, value: "fletcher"},
+			},
+		},
 	}
 
 	for name, tc := range testCases {

@@ -79,6 +79,10 @@ func (tr *tokenReader) getToken() (tok token, err error) {
 			return tr.getTokenNumber()
 		}
 
+		if isLabelRune(r) {
+			return tr.getTokenLabel()
+		}
+
 		err = fmt.Errorf("Invalid rune %q", r)
 		return
 	}
@@ -99,6 +103,27 @@ func (tr *tokenReader) getTokenNumber() (tok token, err error) {
 		}
 
 		if unicode.IsNumber(r) {
+			tr.index++
+			tok.value += string(r)
+			continue
+		}
+
+		return tok, nil
+	}
+}
+
+func (tr *tokenReader) getTokenLabel() (tok token, err error) {
+	tok.typ = TokenType_Label
+	var r rune
+
+	for {
+		r, err = tr.peekRune()
+
+		if err != nil {
+			return tok, err
+		}
+
+		if isLabelRune(r) {
 			tr.index++
 			tok.value += string(r)
 			continue
