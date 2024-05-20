@@ -112,6 +112,9 @@ func (tr *tokenReader) getTokenNumber() (tok token, err error) {
 	}
 }
 
+// getTokenLabel returns the current label token in the input string.
+// If the token reaches the end of the string, getTokenLabel also returns an
+// io.EOF error.
 func (tr *tokenReader) getTokenLabel() (tok token, err error) {
 	tok.typ = TokenType_Label
 	var r rune

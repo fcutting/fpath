@@ -3,6 +3,8 @@ package fpath
 import (
 	"io"
 	"testing"
+
+	"github.com/gkampitakis/go-snaps/snaps"
 )
 
 func Test_isLabelRune(t *testing.T) {
@@ -205,4 +207,35 @@ func Test_tokenReader_getToken_EOF(t *testing.T) {
 			t.Fatalf("Unexpected error: %s", err)
 		}
 	}
+}
+
+func Test_tokenReader_getToken_InvalidRune(t *testing.T) {
+	input := "  123  `"
+	expected := token{
+		typ:   TokenType_Number,
+		value: "123",
+	}
+	tr := newTokenReader(input)
+
+	tok, err := tr.getToken()
+
+	if err != nil && err != io.EOF {
+		t.Fatalf("Unexpected error: %s", err)
+	}
+
+	if tok.typ != expected.typ {
+		t.Fatalf("Unexpected token type\nExpected: %d\nActual: %d", expected.typ, tok.typ)
+	}
+
+	if tok.value != expected.value {
+		t.Fatalf("Unexpected token value\nExpected: %s\nActual: %s", expected.value, tok.value)
+	}
+
+	_, err = tr.getToken()
+
+	if err == nil {
+		t.Fatalf("Error expected but not returned")
+	}
+
+	snaps.MatchSnapshot(t, err.Error())
 }
