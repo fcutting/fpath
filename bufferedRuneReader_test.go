@@ -179,6 +179,12 @@ func Test_tokenReader_getToken(t *testing.T) {
 				{typ: TokenType_Greater},
 			},
 		},
+		"Keyword Lesser": {
+			input: "lesser",
+			expectedTokens: []token{
+				{typ: TokenType_Lesser},
+			},
+		},
 	}
 
 	for name, tc := range testCases {

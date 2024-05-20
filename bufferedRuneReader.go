@@ -15,6 +15,7 @@ const (
 	TokenType_Equals
 	TokenType_Contains
 	TokenType_Greater
+	TokenType_Lesser
 )
 
 var keywords = map[string]int{
@@ -22,6 +23,7 @@ var keywords = map[string]int{
 	"equals":   TokenType_Equals,
 	"contains": TokenType_Contains,
 	"greater":  TokenType_Greater,
+	"lesser":   TokenType_Lesser,
 }
 
 func isLabelRune(r rune) bool {
