@@ -32,6 +32,7 @@ var keywords = map[string]int{
 	"lesser":   tokenType_Lesser,
 }
 
+// isLabelRune returns whether the provided rune is a valid label rune.
 func isLabelRune(r rune) bool {
 	return unicode.IsNumber(r) || unicode.IsLetter(r) || r == '_'
 }
