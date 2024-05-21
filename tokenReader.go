@@ -57,8 +57,10 @@ func newTokenReader(input string) (tr *tokenReader) {
 	}
 }
 
-// Get returns the rune at the current index of the input and increments the
+// getRune returns the rune at the current index of the input and increments the
 // index.
+// If the index is larger than the length of the input, getRune returns an
+// io.EOF error.
 func (tr *tokenReader) getRune() (r rune, err error) {
 	if tr.index == len(tr.input) {
 		return 0, io.EOF
@@ -69,8 +71,10 @@ func (tr *tokenReader) getRune() (r rune, err error) {
 	return r, nil
 }
 
-// Peek returns the rune at the current index of the input but doesn't
+// peekRune returns the rune at the current index of the input but doesn't
 // increment the index.
+// If the index is larger than the length of the input, peekRune returns an
+// io.EOF error.
 func (tr *tokenReader) peekRune() (r rune, err error) {
 	if tr.index == len(tr.input) {
 		return 0, io.EOF
@@ -80,7 +84,8 @@ func (tr *tokenReader) peekRune() (r rune, err error) {
 }
 
 // getToken returns the next token in the input string.
-// At the end of the input string, getToken returns an io.EOF error.
+// If there are no more tokens to process in the string, getToken returns an
+// io.EOF error.
 func (tr *tokenReader) getToken() (tok token, err error) {
 	if tr.buf != nil {
 		tok = *tr.buf
@@ -131,6 +136,10 @@ func (tr *tokenReader) getToken() (tok token, err error) {
 	}
 }
 
+// peekToken returns the current token in the input string but does not
+// increment the index.
+// If there are no more tokens to process in the string, getToken returns an
+// io.EOF error.
 func (tr *tokenReader) peekToken() (tok token, err error) {
 	if tr.buf != nil {
 		tok = *tr.buf
@@ -143,7 +152,7 @@ func (tr *tokenReader) peekToken() (tok token, err error) {
 }
 
 // getTokenNumber returns the current number token in the input string.
-// If the token reaches the end of the string, getTokenNumber also returns an
+// If there are no more tokens to process in the string, getToken returns an
 // io.EOF error.
 func (tr *tokenReader) getTokenNumber() (tok token, err error) {
 	tok.typ = tokenType_Number
@@ -171,7 +180,7 @@ func (tr *tokenReader) getTokenNumber() (tok token, err error) {
 }
 
 // getTokenLabel returns the current label token in the input string.
-// If the token reaches the end of the string, getTokenLabel also returns an
+// If there are no more tokens to process in the string, getToken returns an
 // io.EOF error.
 func (tr *tokenReader) getTokenLabel() (tok token, err error) {
 	tok.typ = tokenType_Label
