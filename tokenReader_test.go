@@ -1,11 +1,25 @@
 package fpath
 
 import (
+	"fmt"
 	"io"
 	"testing"
 
 	"github.com/gkampitakis/go-snaps/snaps"
 )
+
+func _tokensMatch(expected, actual token) (err error) {
+	if expected.typ != actual.typ {
+		err = fmt.Errorf("Unexpected type\nExpected: %d\nActual: %d", expected.typ, actual.typ)
+		return
+	}
+
+	if expected.value != actual.value {
+		err = fmt.Errorf("Unexpected value\nExpected: %s\nActual: %s", expected.value, actual.value)
+	}
+
+	return nil
+}
 
 func Test_isLabelRune(t *testing.T) {
 	testCases := map[string]struct {
@@ -212,16 +226,12 @@ func Test_tokenReader_getToken(t *testing.T) {
 			for _, expected := range tc.expectedTokens {
 				tok, err := tr.getToken()
 
-				if err != nil && err != io.EOF {
+				if err != nil {
 					t.Fatalf("Unexpected error: %s", err)
 				}
 
-				if tok.typ != expected.typ {
-					t.Fatalf("Unexpected token type\nExpected: %d\nActual: %d", expected.typ, tok.typ)
-				}
-
-				if tok.value != expected.value {
-					t.Fatalf("Unexpected token value\nExpected: %s\nActual: %s", expected.value, tok.value)
+				if err := _tokensMatch(expected, tok); err != nil {
+					t.Fatalf("Unexpected result: %s", err)
 				}
 			}
 		})
@@ -238,16 +248,12 @@ func Test_tokenReader_getToken_EOF(t *testing.T) {
 
 	tok, err := tr.getToken()
 
-	if err != nil && err != io.EOF {
+	if err != nil {
 		t.Fatalf("Unexpected error: %s", err)
 	}
 
-	if tok.typ != expected.typ {
-		t.Fatalf("Unexpected token type\nExpected: %d\nActual: %d", expected.typ, tok.typ)
-	}
-
-	if tok.value != expected.value {
-		t.Fatalf("Unexpected token value\nExpected: %s\nActual: %s", expected.value, tok.value)
+	if err := _tokensMatch(expected, tok); err != nil {
+		t.Fatalf("Unexpected result: %s", err)
 	}
 
 	for i := 0; i < 100; i++ {
@@ -267,16 +273,12 @@ func Test_tokenReader_getToken_InvalidRune(t *testing.T) {
 
 	tok, err := tr.getToken()
 
-	if err != nil && err != io.EOF {
+	if err != nil {
 		t.Fatalf("Unexpected error: %s", err)
 	}
 
-	if tok.typ != expected.typ {
-		t.Fatalf("Unexpected token type\nExpected: %d\nActual: %d", expected.typ, tok.typ)
-	}
-
-	if tok.value != expected.value {
-		t.Fatalf("Unexpected token value\nExpected: %s\nActual: %s", expected.value, tok.value)
+	if err := _tokensMatch(expected, tok); err != nil {
+		t.Fatalf("Unexpected result: %s", err)
 	}
 
 	_, err = tr.getToken()
@@ -286,6 +288,83 @@ func Test_tokenReader_getToken_InvalidRune(t *testing.T) {
 	}
 
 	snaps.MatchSnapshot(t, err.Error())
+}
+
+func Test_tokenReader_peekToken(t *testing.T) {
+	input := "123 equals"
+	firstExpected := token{
+		typ:   tokenType_Number,
+		value: "123",
+	}
+	secondExpected := token{
+		typ: tokenType_Equals,
+	}
+	tr := newTokenReader(input)
+	shouldBreak := false
+
+	for i := 0; i < 100; i++ {
+		t.Run("First peek", func(t *testing.T) {
+			tok, err := tr.peekToken()
+
+			if err != nil {
+				shouldBreak = true
+				t.Fatalf("Unexpected error: %s", err)
+			}
+
+			if err := _tokensMatch(firstExpected, tok); err != nil {
+				shouldBreak = true
+				t.Fatalf("Unexpected result: %s", err)
+			}
+		})
+
+		if shouldBreak {
+			break
+		}
+	}
+
+	t.Run("First get", func(t *testing.T) {
+		tok, err := tr.getToken()
+
+		if err != nil {
+			t.Fatalf("Unexpected error: %s", err)
+		}
+
+		if err := _tokensMatch(firstExpected, tok); err != nil {
+			t.Fatalf("Unexpected result: %s", err)
+		}
+	})
+
+	for i := 0; i < 100; i++ {
+		t.Run("Second peek", func(t *testing.T) {
+			tok, err := tr.peekToken()
+
+			if err != nil {
+				shouldBreak = true
+				t.Fatalf("Unexpected error: %s", err)
+			}
+
+			if err := _tokensMatch(secondExpected, tok); err != nil {
+				shouldBreak = true
+				t.Fatalf("Unexpected result: %s", err)
+			}
+		})
+
+		if shouldBreak {
+			break
+		}
+	}
+
+	t.Run("Second get", func(t *testing.T) {
+		tok, err := tr.getToken()
+
+		if err != nil {
+			t.Fatalf("Unexpected error: %s", err)
+		}
+
+		if err := _tokensMatch(secondExpected, tok); err != nil {
+			t.Fatalf("Unexpected result: %s", err)
+		}
+	})
 }
 
 func Test_tokenReader_getTokenStringLiteral_UnexpectedEOF(t *testing.T) {

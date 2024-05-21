@@ -46,6 +46,7 @@ type token struct {
 type tokenReader struct {
 	input []rune
 	index int
+	buf   *token
 }
 
 // newTokenReader returns a new bufferedRuneReader configured to read from a
@@ -81,6 +82,12 @@ func (tr *tokenReader) peekRune() (r rune, err error) {
 // getToken returns the next token in the input string.
 // At the end of the input string, getToken returns an io.EOF error.
 func (tr *tokenReader) getToken() (tok token, err error) {
+	if tr.buf != nil {
+		tok = *tr.buf
+		tr.buf = nil
+		return tok, nil
+	}
+
 	var r rune
 
 	for {
@@ -124,6 +131,17 @@ func (tr *tokenReader) getToken() (tok token, err error) {
 	}
 }
 
+func (tr *tokenReader) peekToken() (tok token, err error) {
+	if tr.buf != nil {
+		tok = *tr.buf
+		return tok, nil
+	}
+
+	tok, err = tr.getToken()
+	tr.buf = &tok
+	return tok, err
+}
+
 // getTokenNumber returns the current number token in the input string.
 // If the token reaches the end of the string, getTokenNumber also returns an
 // io.EOF error.
@@ -133,6 +151,10 @@ func (tr *tokenReader) getTokenNumber() (tok token, err error) {
 
 	for {
 		r, err = tr.peekRune()
+
+		if err == io.EOF {
+			return tok, nil
+		}
 
 		if err != nil {
 			return tok, err
@@ -177,6 +199,10 @@ func (tr *tokenReader) getTokenLabel() (tok token, err error) {
 		}, nil
 	}
 
+	if err == io.EOF {
+		return tok, nil
+	}
+
 	return tok, err
 }
 
@@ -191,8 +217,13 @@ func (tr *tokenReader) getTokenStringLiteral() (tok token, err error) {
 	for {
 		r, err = tr.getRune()
 
-		if err != nil {
+		if err == io.EOF {
 			err = UnexpectedEOF
+			return
+		}
+
+		if err != nil {
+			err = fmt.Errorf("unexpected error: %s", err)
 			return
 		}
 
