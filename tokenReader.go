@@ -33,8 +33,9 @@ var keywords = map[string]int{
 }
 
 // isLabelRune returns whether the provided rune is a valid label rune.
+// Valid label runes are letters, numbers, and underscores.
 func isLabelRune(r rune) bool {
-	return unicode.IsNumber(r) || unicode.IsLetter(r) || r == '_'
+	return unicode.IsLetter(r) || unicode.IsNumber(r) || r == '_'
 }
 
 type token struct {
