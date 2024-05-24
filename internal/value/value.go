@@ -44,3 +44,8 @@ func (v *ValueHolder) PutNumberValue(token string) (value Value, err error) {
 		Key:  key,
 	}, nil
 }
+
+func (v ValueHolder) GetNumberValue(key int) (number decimal.Decimal, ok bool) {
+	number, ok = v.numberValues[key]
+	return number, ok
+}

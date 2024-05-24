@@ -11,3 +11,7 @@
  "Type": 1
 }
 ---
+
+[Test_ValueHolder_GetNumberValue - 1]
+"123"
+---
