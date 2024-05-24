@@ -1,4 +1,4 @@
-package fpath
+package tokreader
 
 import (
 	"fmt"
@@ -8,14 +8,14 @@ import (
 	"github.com/gkampitakis/go-snaps/snaps"
 )
 
-func _tokensMatch(expected, actual token) (err error) {
-	if expected.typ != actual.typ {
-		err = fmt.Errorf("Unexpected type\nExpected: %d\nActual: %d", expected.typ, actual.typ)
+func _tokensMatch(expected, actual Token) (err error) {
+	if expected.Type != actual.Type {
+		err = fmt.Errorf("Unexpected type\nExpected: %d\nActual: %d", expected.Type, actual.Type)
 		return
 	}
 
-	if expected.value != actual.value {
-		err = fmt.Errorf("Unexpected value\nExpected: %s\nActual: %s", expected.value, actual.value)
+	if expected.Value != actual.Value {
+		err = fmt.Errorf("Unexpected value\nExpected: %s\nActual: %s", expected.Value, actual.Value)
 	}
 
 	return nil
@@ -69,7 +69,7 @@ func Test_isLabelRune(t *testing.T) {
 func Test_tokenReader_getRune(t *testing.T) {
 	input := "hello world"
 	expectedRunes := []rune{'h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd'}
-	tr := newTokenReader(input)
+	tr := NewTokenReader(input)
 
 	for i, expected := range expectedRunes {
 		r, err := tr.getRune()
@@ -87,7 +87,7 @@ func Test_tokenReader_getRune(t *testing.T) {
 func Test_tokenReader_getRune_EOF(t *testing.T) {
 	input := "h"
 	expected := 'h'
-	tr := newTokenReader(input)
+	tr := NewTokenReader(input)
 
 	r, err := tr.getRune()
 
@@ -109,7 +109,7 @@ func Test_tokenReader_getRune_EOF(t *testing.T) {
 func Test_tokenReader_peekRune(t *testing.T) {
 	input := "hello world"
 	expected := 'h'
-	tr := newTokenReader(input)
+	tr := NewTokenReader(input)
 
 	for i := 0; i < 10; i++ {
 		r, err := tr.peekRune()
@@ -127,7 +127,7 @@ func Test_tokenReader_peekRune(t *testing.T) {
 func Test_tokenReader_peekRune_EOF(t *testing.T) {
 	input := "h"
 	expected := 'h'
-	tr := newTokenReader(input)
+	tr := NewTokenReader(input)
 
 	r, err := tr.getRune()
 
@@ -149,82 +149,82 @@ func Test_tokenReader_peekRune_EOF(t *testing.T) {
 func Test_tokenReader_getToken(t *testing.T) {
 	testCases := map[string]struct {
 		input          string
-		expectedTokens []token
+		expectedTokens []Token
 	}{
 		"Whitespace": {
 			input: "  123  ",
-			expectedTokens: []token{
-				{typ: tokenType_Number, value: "123"},
+			expectedTokens: []Token{
+				{Type: TokenType_Number, Value: "123"},
 			},
 		},
 		"Number": {
 			input: "123",
-			expectedTokens: []token{
-				{typ: tokenType_Number, value: "123"},
+			expectedTokens: []Token{
+				{Type: TokenType_Number, Value: "123"},
 			},
 		},
 		"Label": {
 			input: "fletcher",
-			expectedTokens: []token{
-				{typ: tokenType_Label, value: "fletcher"},
+			expectedTokens: []Token{
+				{Type: TokenType_Label, Value: "fletcher"},
 			},
 		},
 		"StringLiteral": {
 			input: `"hello world"`,
-			expectedTokens: []token{
-				{typ: tokenType_StringLiteral, value: "hello world"},
+			expectedTokens: []Token{
+				{Type: TokenType_StringLiteral, Value: "hello world"},
 			},
 		},
 		"Keyword Not": {
 			input: "not",
-			expectedTokens: []token{
-				{typ: tokenType_Not},
+			expectedTokens: []Token{
+				{Type: TokenType_Not},
 			},
 		},
 		"Keyword Equals": {
 			input: "equals",
-			expectedTokens: []token{
-				{typ: tokenType_Equals},
+			expectedTokens: []Token{
+				{Type: TokenType_Equals},
 			},
 		},
 		"Keyword Contains": {
 			input: "contains",
-			expectedTokens: []token{
-				{typ: tokenType_Contains},
+			expectedTokens: []Token{
+				{Type: TokenType_Contains},
 			},
 		},
 		"Keyword Greater": {
 			input: "greater",
-			expectedTokens: []token{
-				{typ: tokenType_Greater},
+			expectedTokens: []Token{
+				{Type: TokenType_Greater},
 			},
 		},
 		"Keyword Lesser": {
 			input: "lesser",
-			expectedTokens: []token{
-				{typ: tokenType_Lesser},
+			expectedTokens: []Token{
+				{Type: TokenType_Lesser},
 			},
 		},
 		"OpenParan": {
 			input: "(",
-			expectedTokens: []token{
-				{typ: tokenType_OpenParan},
+			expectedTokens: []Token{
+				{Type: TokenType_OpenParan},
 			},
 		},
 		"CloseParan": {
 			input: ")",
-			expectedTokens: []token{
-				{typ: tokenType_CloseParan},
+			expectedTokens: []Token{
+				{Type: TokenType_CloseParan},
 			},
 		},
 	}
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			tr := newTokenReader(tc.input)
+			tr := NewTokenReader(tc.input)
 
 			for _, expected := range tc.expectedTokens {
-				tok, err := tr.getToken()
+				tok, err := tr.GetToken()
 
 				if err != nil {
 					t.Fatalf("Unexpected error: %s", err)
@@ -240,13 +240,13 @@ func Test_tokenReader_getToken(t *testing.T) {
 
 func Test_tokenReader_getToken_EOF(t *testing.T) {
 	input := "  123  "
-	expected := token{
-		typ:   tokenType_Number,
-		value: "123",
+	expected := Token{
+		Type:  TokenType_Number,
+		Value: "123",
 	}
-	tr := newTokenReader(input)
+	tr := NewTokenReader(input)
 
-	tok, err := tr.getToken()
+	tok, err := tr.GetToken()
 
 	if err != nil {
 		t.Fatalf("Unexpected error: %s", err)
@@ -257,7 +257,7 @@ func Test_tokenReader_getToken_EOF(t *testing.T) {
 	}
 
 	for i := 0; i < 100; i++ {
-		if _, err := tr.getToken(); err != io.EOF {
+		if _, err := tr.GetToken(); err != io.EOF {
 			t.Fatalf("Unexpected error: %s", err)
 		}
 	}
@@ -265,13 +265,13 @@ func Test_tokenReader_getToken_EOF(t *testing.T) {
 
 func Test_tokenReader_getToken_InvalidRune(t *testing.T) {
 	input := "  123  `"
-	expected := token{
-		typ:   tokenType_Number,
-		value: "123",
+	expected := Token{
+		Type:  TokenType_Number,
+		Value: "123",
 	}
-	tr := newTokenReader(input)
+	tr := NewTokenReader(input)
 
-	tok, err := tr.getToken()
+	tok, err := tr.GetToken()
 
 	if err != nil {
 		t.Fatalf("Unexpected error: %s", err)
@@ -281,7 +281,7 @@ func Test_tokenReader_getToken_InvalidRune(t *testing.T) {
 		t.Fatalf("Unexpected result: %s", err)
 	}
 
-	_, err = tr.getToken()
+	_, err = tr.GetToken()
 
 	if err == nil {
 		t.Fatalf("Error expected but not returned")
@@ -292,19 +292,19 @@ func Test_tokenReader_getToken_InvalidRune(t *testing.T) {
 
 func Test_tokenReader_peekToken(t *testing.T) {
 	input := "123 equals"
-	firstExpected := token{
-		typ:   tokenType_Number,
-		value: "123",
+	firstExpected := Token{
+		Type:  TokenType_Number,
+		Value: "123",
 	}
-	secondExpected := token{
-		typ: tokenType_Equals,
+	secondExpected := Token{
+		Type: TokenType_Equals,
 	}
-	tr := newTokenReader(input)
+	tr := NewTokenReader(input)
 	shouldBreak := false
 
 	for i := 0; i < 100; i++ {
 		t.Run("First peek", func(t *testing.T) {
-			tok, err := tr.peekToken()
+			tok, err := tr.PeekToken()
 
 			if err != nil {
 				shouldBreak = true
@@ -323,7 +323,7 @@ func Test_tokenReader_peekToken(t *testing.T) {
 	}
 
 	t.Run("First get", func(t *testing.T) {
-		tok, err := tr.getToken()
+		tok, err := tr.GetToken()
 
 		if err != nil {
 			t.Fatalf("Unexpected error: %s", err)
@@ -336,7 +336,7 @@ func Test_tokenReader_peekToken(t *testing.T) {
 
 	for i := 0; i < 100; i++ {
 		t.Run("Second peek", func(t *testing.T) {
-			tok, err := tr.peekToken()
+			tok, err := tr.PeekToken()
 
 			if err != nil {
 				shouldBreak = true
@@ -355,7 +355,7 @@ func Test_tokenReader_peekToken(t *testing.T) {
 	}
 
 	t.Run("Second get", func(t *testing.T) {
-		tok, err := tr.getToken()
+		tok, err := tr.GetToken()
 
 		if err != nil {
 			t.Fatalf("Unexpected error: %s", err)
@@ -369,9 +369,9 @@ func Test_tokenReader_peekToken(t *testing.T) {
 
 func Test_tokenReader_getTokenStringLiteral_UnexpectedEOF(t *testing.T) {
 	input := `"hello `
-	tr := newTokenReader(input)
+	tr := NewTokenReader(input)
 
-	_, err := tr.getToken()
+	_, err := tr.GetToken()
 
 	if err == nil {
 		t.Fatalf("Error expected but not returned")
