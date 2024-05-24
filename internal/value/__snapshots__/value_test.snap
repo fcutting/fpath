@@ -1,4 +1,8 @@
 
+[Test_ValueHolder_GetNumberValue - 1]
+"123"
+---
+
 [Test_ValueHolder_PutNumberValue/NumberValues - 1]
 {
  "0": "123"
@@ -12,19 +16,15 @@
 }
 ---
 
-[Test_ValueHolder_GetNumberValue - 1]
-"123"
+[Test_ValueHolder_PutValue/NumberValues - 1]
+{
+ "0": "123"
+}
 ---
 
 [Test_ValueHolder_PutValue/Value - 1]
 {
  "Key": 0,
  "Type": 1
-}
----
-
-[Test_ValueHolder_PutValue/NumberValues - 1]
-{
- "0": "123"
 }
 ---

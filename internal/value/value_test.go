@@ -1,11 +1,18 @@
 package value
 
 import (
+	"os"
 	"testing"
 
 	"github.com/fcutting/fpath/internal/tokreader"
 	"github.com/gkampitakis/go-snaps/snaps"
 )
+
+func TestMain(m *testing.M) {
+	r := m.Run()
+	snaps.Clean(m, snaps.CleanOpts{Sort: true})
+	os.Exit(r)
+}
 
 func Test_ValueHolder_PutValue(t *testing.T) {
 	v := NewValueHolder()
