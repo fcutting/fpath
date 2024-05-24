@@ -3,8 +3,28 @@ package value
 import (
 	"testing"
 
+	"github.com/fcutting/fpath/internal/tokreader"
 	"github.com/gkampitakis/go-snaps/snaps"
 )
+
+func Test_ValueHolder_PutValue(t *testing.T) {
+	v := NewValueHolder()
+	tokenType := tokreader.TokenType_Number
+	tokenValue := "123"
+	value, err := v.PutValue(tokenType, tokenValue)
+
+	if err != nil {
+		t.Fatalf("Unexpected error: %s", err)
+	}
+
+	t.Run("Value", func(t *testing.T) {
+		snaps.MatchJSON(t, value)
+	})
+
+	t.Run("NumberValues", func(t *testing.T) {
+		snaps.MatchJSON(t, v.numberValues)
+	})
+}
 
 func Test_ValueHolder_PutNumberValue(t *testing.T) {
 	v := NewValueHolder()

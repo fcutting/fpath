@@ -3,6 +3,7 @@ package value
 import (
 	"fmt"
 
+	"github.com/fcutting/fpath/internal/tokreader"
 	"github.com/shopspring/decimal"
 )
 
@@ -27,11 +28,24 @@ type ValueHolder struct {
 	numberIndex  int
 }
 
-func (v *ValueHolder) PutNumberValue(token string) (value Value, err error) {
-	number, err := decimal.NewFromString(token)
+func (v *ValueHolder) PutValue(tokenType int, tokenValue string) (value Value, err error) {
+	switch tokenType {
+	case tokreader.TokenType_Undefined:
+		err = fmt.Errorf("Undefined token type provided")
+		return
+	case tokreader.TokenType_Number:
+		return v.PutNumberValue(tokenValue)
+	default:
+		err = fmt.Errorf("Unknown token type %q", tokenType)
+		return
+	}
+}
+
+func (v *ValueHolder) PutNumberValue(tokenValue string) (value Value, err error) {
+	number, err := decimal.NewFromString(tokenValue)
 
 	if err != nil {
-		err = fmt.Errorf("failed to convert %q to decimal.Decimal: %w", token, err)
+		err = fmt.Errorf("failed to convert %q to decimal.Decimal: %w", tokenValue, err)
 		return
 	}
 
