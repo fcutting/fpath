@@ -3,10 +3,17 @@ package tokreader
 import (
 	"fmt"
 	"io"
+	"os"
 	"testing"
 
 	"github.com/gkampitakis/go-snaps/snaps"
 )
+
+func TestMain(m *testing.M) {
+	r := m.Run()
+	snaps.Clean(m, snaps.CleanOpts{Sort: true})
+	os.Exit(r)
+}
 
 func _tokensMatch(expected, actual Token) (err error) {
 	if expected.Type != actual.Type {
