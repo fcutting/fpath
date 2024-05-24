@@ -43,20 +43,20 @@ type Token struct {
 	Value string
 }
 
-// tokenReader adds the functionality to get and peek tokens from a
-// string using a buffer.
-type TokenReader struct {
-	input []rune
-	index int
-	buf   *Token
-}
-
 // NewTokenReader returns a new TokenReader configured to read from a slice
 // []rune value of the input string.
 func NewTokenReader(input string) *TokenReader {
 	return &TokenReader{
 		input: []rune(input),
 	}
+}
+
+// tokenReader adds the functionality to get and peek tokens from a
+// string using a buffer.
+type TokenReader struct {
+	input []rune
+	index int
+	buf   *Token
 }
 
 // getRune returns the rune at the current index of the input and increments the
