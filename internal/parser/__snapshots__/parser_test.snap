@@ -1,4 +1,12 @@
 
+[Test_Parser_ParseExpression/Integer - 1]
+parser.NumberNode: {123}
+---
+
+[Test_Parser_ParseExpression_Error/Unknown - 1]
+unknown token type: 9
+---
+
 [Test_parseNumber/Float - 1]
 123.456
 ---

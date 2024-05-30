@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -12,6 +13,54 @@ func TestMain(m *testing.M) {
 	r := m.Run()
 	snaps.Clean(m, snaps.CleanOpts{Sort: true})
 	os.Exit(r)
+}
+
+func Test_Parser_ParseExpression(t *testing.T) {
+	testCases := map[string]struct {
+		input string
+	}{
+		"Integer": {
+			input: "123",
+		},
+	}
+
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			tr := tokreader.NewTokenReader(tc.input)
+			parser := NewParser(tr)
+			expression, err := parser.ParseExpression()
+
+			if err != nil {
+				t.Fatalf("Unexpected error: %s", err)
+			}
+
+			snaps.MatchSnapshot(t, fmt.Sprintf("%T: %v", expression, expression))
+		})
+	}
+}
+
+func Test_Parser_ParseExpression_Error(t *testing.T) {
+	testCases := map[string]struct {
+		input string
+	}{
+		"Unknown": {
+			input: "(",
+		},
+	}
+
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			tr := tokreader.NewTokenReader(tc.input)
+			parser := NewParser(tr)
+			_, err := parser.ParseExpression()
+
+			if err == nil {
+				t.Fatalf("Expeted error but none returned")
+			}
+
+			snaps.MatchSnapshot(t, err.Error())
+		})
+	}
 }
 
 func Test_parseNumber(t *testing.T) {
