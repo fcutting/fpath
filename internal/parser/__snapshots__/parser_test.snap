@@ -1,0 +1,16 @@
+
+[Test_parseNumber/Float - 1]
+123.456
+---
+
+[Test_parseNumber/Integer - 1]
+123
+---
+
+[Test_parseNumber_Error/Bad_float - 1]
+failed to convert token value "123,456" to number: can't convert 123,456 to decimal
+---
+
+[Test_parseNumber_Error/Word - 1]
+failed to convert token value "kachow" to number: can't convert kachow to decimal
+---
