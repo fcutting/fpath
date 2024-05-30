@@ -77,7 +77,7 @@ func Test_parseNumber(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			numberNode, err := parseNumber(tokreader.Token{Value: tc.value})
+			numberNode, err := parseNumber(tokreader.Token{Type: tokreader.TokenType_Number, Value: tc.value})
 
 			if err != nil {
 				t.Fatalf("Unexpected error: %s", err)
@@ -90,19 +90,25 @@ func Test_parseNumber(t *testing.T) {
 
 func Test_parseNumber_Error(t *testing.T) {
 	testCases := map[string]struct {
+		typ   int
 		value string
 	}{
 		"Bad float": {
+			typ:   tokreader.TokenType_Number,
 			value: "123,456",
 		},
 		"Word": {
+			typ:   tokreader.TokenType_Number,
 			value: "kachow",
+		},
+		"Wrong type": {
+			typ: tokreader.TokenType_OpenParan,
 		},
 	}
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			_, err := parseNumber(tokreader.Token{Value: tc.value})
+			_, err := parseNumber(tokreader.Token{Type: tc.typ, Value: tc.value})
 
 			if err == nil {
 				t.Fatalf("Expected error but none returned")

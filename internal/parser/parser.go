@@ -17,6 +17,8 @@ type Parser struct {
 	tr *tokreader.TokenReader
 }
 
+// ParseExpression returns the next expression in the query.
+// If the next token is not an expression, this step will return an error.
 func (p *Parser) ParseExpression() (expression Expression, err error) {
 	token, err := p.tr.GetToken()
 
@@ -37,7 +39,13 @@ func (p *Parser) ParseExpression() (expression Expression, err error) {
 	}
 }
 
+// parseNumber accepts a number token and converts it to a NumberNode.
 func parseNumber(token tokreader.Token) (number NumberNode, err error) {
+	if token.Type != tokreader.TokenType_Number {
+		err = fmt.Errorf("Token type is not a number: %v", token.Type)
+		return
+	}
+
 	number.Value, err = decimal.NewFromString(token.Value)
 
 	if err != nil {

@@ -22,3 +22,7 @@ failed to convert token value "123,456" to number: can't convert 123,456 to deci
 [Test_parseNumber_Error/Word - 1]
 failed to convert token value "kachow" to number: can't convert kachow to decimal
 ---
+
+[Test_parseNumber_Error/Wrong_type - 1]
+Token type is not a number: 9
+---
