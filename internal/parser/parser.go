@@ -17,6 +17,17 @@ type Parser struct {
 	tr *tokreader.TokenReader
 }
 
+// ParseBlock returns the next block in the query.
+func (p *Parser) ParseBlock() (block BlockNode, err error) {
+	block.Expression, err = p.ParseExpression()
+
+	if err != nil {
+		err = fmt.Errorf("failed to parse expression: %w", err)
+	}
+
+	return block, nil
+}
+
 // ParseExpression returns the next expression in the query.
 // If the next token is not an expression, this step will return an error.
 func (p *Parser) ParseExpression() (expression Expression, err error) {

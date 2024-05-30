@@ -3,10 +3,18 @@ package parser
 import "github.com/shopspring/decimal"
 
 const (
-	NodeType_Block = iota
+	NodeType_Undefined = iota
+	NodeType_Block
 	NodeType_Number
 	NodeType_Add
 )
+
+var NodeTypeString map[int]string = map[int]string{
+	NodeType_Undefined: "Undefined",
+	NodeType_Block:     "Block",
+	NodeType_Number:    "Number",
+	NodeType_Add:       "Add",
+}
 
 // Node is the most atomic piece of fpath syntax, describing both expressions
 // and operations.
@@ -21,6 +29,7 @@ func (AddNode) Type() int    { return NodeType_Add }
 // Expression nodes are evaluable in isolation of other nodes and don't depend
 // on external data.
 type Expression interface {
+	Node
 	expression()
 }
 
@@ -29,6 +38,7 @@ func (NumberNode) expression() {}
 
 // Operation nodes require an additional input to evaluate to a value.
 type Operation interface {
+	Node
 	operation()
 }
 

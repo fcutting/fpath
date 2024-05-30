@@ -1,4 +1,8 @@
 
+[Test_Parse_ParseBlock/Arithmetic - 1]
+Expression: Number: {2}
+---
+
 [Test_Parser_ParseExpression/Integer - 1]
 parser.NumberNode: {123}
 ---

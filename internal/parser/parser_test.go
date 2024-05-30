@@ -15,6 +15,30 @@ func TestMain(m *testing.M) {
 	os.Exit(r)
 }
 
+func Test_Parse_ParseBlock(t *testing.T) {
+	testCases := map[string]struct {
+		input string
+	}{
+		"Arithmetic": {
+			input: "2 + 4",
+		},
+	}
+
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			tr := tokreader.NewTokenReader(tc.input)
+			parser := NewParser(tr)
+			block, err := parser.ParseBlock()
+
+			if err != nil {
+				t.Fatalf("Unexpected error: %s", err)
+			}
+
+			snaps.MatchSnapshot(t, fmt.Sprintf("Expression: %s: %v", NodeTypeString[block.Expression.Type()], block.Expression))
+		})
+	}
+}
+
 func Test_Parser_ParseExpression(t *testing.T) {
 	testCases := map[string]struct {
 		input string
