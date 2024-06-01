@@ -28,6 +28,28 @@ func (p *Parser) ParseBlock() (block BlockNode, err error) {
 	return block, nil
 }
 
+// ParseOperation returns the next operation in the query.
+// If the next token is not an operation, this step will return an error.
+func (p *Parser) ParseOperation() (operation Operation, err error) {
+	token, err := p.tr.GetToken()
+
+	if err != nil {
+		err = fmt.Errorf("failed to get token: %w", err)
+		return
+	}
+
+	switch token.Type {
+	case tokreader.TokenType_Undefined:
+		err = fmt.Errorf("encountered undefined token: %q", token.Value)
+		return
+	case tokreader.TokenType_Equals:
+		return p.ParseEquals()
+	default:
+		err = fmt.Errorf("unsupported token type: %s", tokreader.TokenTypeString[token.Type])
+		return
+	}
+}
+
 // ParseEquals returns a parsed EqualsNode assuming the current operation is an
 // equals operation.
 func (p *Parser) ParseEquals() (equals EqualsNode, err error) {
@@ -58,7 +80,7 @@ func (p *Parser) ParseExpression() (expression Expression, err error) {
 	case tokreader.TokenType_Number:
 		return parseNumber(token)
 	default:
-		err = fmt.Errorf("unknown token type: %s", tokreader.TokenTypeString[token.Type])
+		err = fmt.Errorf("unsupported token type: %s", tokreader.TokenTypeString[token.Type])
 		return
 	}
 }
