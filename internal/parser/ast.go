@@ -29,7 +29,6 @@ type Node interface {
 }
 
 func (BlockNode) String() string  { return "" }
-func (NumberNode) String() string { return "" }
 func (EqualsNode) String() string { return "" }
 
 func (BlockNode) Type() int  { return NodeType_Block }
@@ -66,6 +65,10 @@ type BlockNode struct {
 // NumberNode represents a number literal.
 type NumberNode struct {
 	Value decimal.Decimal
+}
+
+func (n NumberNode) String() string {
+	return fmt.Sprintf("NumberNode{ Value: %s }", n.Value.String())
 }
 
 // EqualsNode represents an operation that compares the current value with an

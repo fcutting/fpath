@@ -34,7 +34,7 @@ func Test_Parse_ParseBlock(t *testing.T) {
 				t.Fatalf("Unexpected error: %s", err)
 			}
 
-			snaps.MatchSnapshot(t, fmt.Sprintf("Expression: %s: %v", NodeTypeString[block.Expression.Type()], block.Expression))
+			snaps.MatchSnapshot(t, fmt.Sprintf("Expression: %s", block.Expression.String()))
 		})
 	}
 }
@@ -58,7 +58,7 @@ func Test_Parser_ParseExpression(t *testing.T) {
 				t.Fatalf("Unexpected error: %s", err)
 			}
 
-			snaps.MatchSnapshot(t, fmt.Sprintf("%T: %v", expression, expression))
+			snaps.MatchSnapshot(t, expression.String())
 		})
 	}
 }
@@ -107,7 +107,7 @@ func Test_parseNumber(t *testing.T) {
 				t.Fatalf("Unexpected error: %s", err)
 			}
 
-			snaps.MatchSnapshot(t, numberNode.Value.String())
+			snaps.MatchSnapshot(t, numberNode.String())
 		})
 	}
 }

@@ -1,10 +1,10 @@
 
 [Test_Parse_ParseBlock/Arithmetic - 1]
-Expression: Number: {2}
+Expression: NumberNode{ Value: 2 }
 ---
 
 [Test_Parser_ParseExpression/Integer - 1]
-parser.NumberNode: {123}
+NumberNode{ Value: 123 }
 ---
 
 [Test_Parser_ParseExpression_Error/Unknown - 1]
@@ -12,11 +12,11 @@ unknown token type: 9
 ---
 
 [Test_parseNumber/Float - 1]
-123.456
+NumberNode{ Value: 123.456 }
 ---
 
 [Test_parseNumber/Integer - 1]
-123
+NumberNode{ Value: 123 }
 ---
 
 [Test_parseNumber_Error/Bad_float - 1]
