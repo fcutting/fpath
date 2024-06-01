@@ -3,12 +3,16 @@
 BlockNode{ Expression: NumberNode{ Value: 2 }, Operations: [] }
 ---
 
+[Test_Parse_ParseEquals - 1]
+EqualsNode{ Expression: NumberNode{ Value: 2 } }
+---
+
 [Test_Parser_ParseExpression/Integer - 1]
 NumberNode{ Value: 123 }
 ---
 
 [Test_Parser_ParseExpression_Error/Unknown - 1]
-unknown token type: 9
+unknown token type: OpenParan
 ---
 
 [Test_parseNumber/Float - 1]

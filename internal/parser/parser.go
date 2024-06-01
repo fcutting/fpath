@@ -28,6 +28,19 @@ func (p *Parser) ParseBlock() (block BlockNode, err error) {
 	return block, nil
 }
 
+// ParseEquals returns a parsed EqualsNode assuming the current operation is an
+// equals operation.
+func (p *Parser) ParseEquals() (equals EqualsNode, err error) {
+	equals.Expression, err = p.ParseExpression()
+
+	if err != nil {
+		err = fmt.Errorf("failed to parse expression: %w", err)
+		return
+	}
+
+	return equals, nil
+}
+
 // ParseExpression returns the next expression in the query.
 // If the next token is not an expression, this step will return an error.
 func (p *Parser) ParseExpression() (expression Expression, err error) {
@@ -45,7 +58,7 @@ func (p *Parser) ParseExpression() (expression Expression, err error) {
 	case tokreader.TokenType_Number:
 		return parseNumber(token)
 	default:
-		err = fmt.Errorf("unknown token type: %v", token.Type)
+		err = fmt.Errorf("unknown token type: %s", tokreader.TokenTypeString[token.Type])
 		return
 	}
 }

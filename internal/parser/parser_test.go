@@ -38,6 +38,19 @@ func Test_Parse_ParseBlock(t *testing.T) {
 	}
 }
 
+func Test_Parse_ParseEquals(t *testing.T) {
+	input := "2"
+	tr := tokreader.NewTokenReader(input)
+	parser := NewParser(tr)
+	equals, err := parser.ParseEquals()
+
+	if err != nil {
+		t.Fatalf("Unexpected error: %s", err)
+	}
+
+	snaps.MatchSnapshot(t, equals.String())
+}
+
 func Test_Parser_ParseExpression(t *testing.T) {
 	testCases := map[string]struct {
 		input string
