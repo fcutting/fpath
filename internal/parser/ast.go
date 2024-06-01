@@ -6,14 +6,12 @@ const (
 	NodeType_Undefined = iota
 	NodeType_Block
 	NodeType_Number
-	NodeType_Add
 )
 
 var NodeTypeString map[int]string = map[int]string{
 	NodeType_Undefined: "Undefined",
 	NodeType_Block:     "Block",
 	NodeType_Number:    "Number",
-	NodeType_Add:       "Add",
 }
 
 // Node is the most atomic piece of fpath syntax, describing both expressions
@@ -24,7 +22,6 @@ type Node interface {
 
 func (BlockNode) Type() int  { return NodeType_Block }
 func (NumberNode) Type() int { return NodeType_Number }
-func (AddNode) Type() int    { return NodeType_Add }
 
 // Expression nodes are evaluable in isolation of other nodes and don't depend
 // on external data.
@@ -42,8 +39,6 @@ type Operation interface {
 	operation()
 }
 
-func (AddNode) operation() {}
-
 // BlockNode represents an executable fpath block that contains a base
 // expression and a collection of operations to perform on the expression.
 type BlockNode struct {
@@ -54,10 +49,4 @@ type BlockNode struct {
 // NumberNode represents a number literal.
 type NumberNode struct {
 	Value decimal.Decimal
-}
-
-// AddNode represents an operation that adds the current value of the block
-// with an expression.
-type AddNode struct {
-	Value Expression
 }
