@@ -65,7 +65,7 @@ func NewTokenReader(input string) *TokenReader {
 	}
 }
 
-// tokenReader adds the functionality to get and peek tokens from a
+// TokenReader adds the functionality to get and peek tokens from a
 // string using a buffer.
 type TokenReader struct {
 	input []rune

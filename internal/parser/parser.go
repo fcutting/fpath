@@ -14,6 +14,7 @@ func NewParser(tr *tokreader.TokenReader) *Parser {
 	}
 }
 
+// Parser parses a tokenized string into an executable AST.
 type Parser struct {
 	tr *tokreader.TokenReader
 }
