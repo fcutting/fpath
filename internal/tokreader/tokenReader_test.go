@@ -17,7 +17,7 @@ func TestMain(m *testing.M) {
 
 func _tokensMatch(expected, actual Token) (err error) {
 	if expected.Type != actual.Type {
-		err = fmt.Errorf("Unexpected type\nExpected: %d\nActual: %d", expected.Type, actual.Type)
+		err = fmt.Errorf("Unexpected type\nExpected: %s\nActual: %s", TokenTypeString[expected.Type], TokenTypeString[actual.Type])
 		return
 	}
 
