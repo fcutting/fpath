@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/fcutting/fpath/internal/tokreader"
 	"github.com/shopspring/decimal"
@@ -25,6 +26,22 @@ func (p *Parser) ParseBlock() (block BlockNode, err error) {
 		err = fmt.Errorf("failed to parse expression: %w", err)
 	}
 
+	for {
+		var operation Operation
+		operation, err = p.ParseOperation()
+
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			err = fmt.Errorf("failed to parser operation: %w", err)
+			return
+		}
+
+		block.Operations = append(block.Operations, operation)
+	}
+
 	return block, nil
 }
 
@@ -32,6 +49,10 @@ func (p *Parser) ParseBlock() (block BlockNode, err error) {
 // If the next token is not an operation, this step will return an error.
 func (p *Parser) ParseOperation() (operation Operation, err error) {
 	token, err := p.tr.GetToken()
+
+	if err == io.EOF {
+		return nil, err
+	}
 
 	if err != nil {
 		err = fmt.Errorf("failed to get token: %w", err)
