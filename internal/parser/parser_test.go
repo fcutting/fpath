@@ -18,8 +18,8 @@ func Test_Parse_ParseBlock(t *testing.T) {
 	testCases := map[string]struct {
 		input string
 	}{
-		"Arithmetic": {
-			input: "2 + 4",
+		"Equals": {
+			input: "2 equals 4",
 		},
 	}
 

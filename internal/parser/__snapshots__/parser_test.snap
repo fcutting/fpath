@@ -1,5 +1,5 @@
 
-[Test_Parse_ParseBlock/Arithmetic - 1]
+[Test_Parse_ParseBlock/Equals - 1]
 BlockNode{ Expression: NumberNode{ Value: 2 }, Operations: [] }
 ---
 
