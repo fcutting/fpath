@@ -22,6 +22,20 @@ const (
 	TokenType_CloseParan
 )
 
+var TokenTypeString map[int]string = map[int]string{
+	TokenType_Undefined:     "Undefined",
+	TokenType_Number:        "Number",
+	TokenType_Label:         "Label",
+	TokenType_StringLiteral: "StringLiteral",
+	TokenType_Not:           "Not",
+	TokenType_Equals:        "Equals",
+	TokenType_Contains:      "Contains",
+	TokenType_Greater:       "Greater",
+	TokenType_Lesser:        "Lesser",
+	TokenType_OpenParan:     "OpenParan",
+	TokenType_CloseParan:    "CloseParan",
+}
+
 var UnexpectedEOF = errors.New("Unexpected EOF")
 
 var keywords = map[string]int{

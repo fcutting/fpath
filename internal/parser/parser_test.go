@@ -79,7 +79,7 @@ func Test_Parser_ParseExpression_Error(t *testing.T) {
 			_, err := parser.ParseExpression()
 
 			if err == nil {
-				t.Fatalf("Expeted error but none returned")
+				t.Fatalf("Expected error but none returned")
 			}
 
 			snaps.MatchSnapshot(t, err.Error())
