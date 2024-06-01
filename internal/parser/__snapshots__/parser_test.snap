@@ -1,6 +1,6 @@
 
 [Test_Parse_ParseBlock/Arithmetic - 1]
-Expression: NumberNode{ Value: 2 }
+BlockNode{ Expression: NumberNode{ Value: 2 }, Operations: [] }
 ---
 
 [Test_Parser_ParseExpression/Integer - 1]

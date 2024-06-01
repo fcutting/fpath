@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/shopspring/decimal"
 )
@@ -27,8 +28,6 @@ type Node interface {
 
 	Type() int
 }
-
-func (BlockNode) String() string { return "" }
 
 func (BlockNode) Type() int  { return NodeType_Block }
 func (NumberNode) Type() int { return NodeType_Number }
@@ -59,6 +58,19 @@ func (EqualsNode) operation() {}
 type BlockNode struct {
 	Expression Expression
 	Operations []Operation
+}
+
+// String returns a string representation of a BlockNode.
+func (b BlockNode) String() string {
+	operationsStrings := make([]string, len(b.Operations))
+
+	for i, o := range b.Operations {
+		operationsStrings[i] = o.String()
+	}
+
+	operationsString := "[" + strings.Join(operationsStrings, ", ") + "]"
+
+	return fmt.Sprintf("BlockNode{ Expression: %s, Operations: %s }", b.Expression.String(), operationsString)
 }
 
 // NumberNode represents a number literal.

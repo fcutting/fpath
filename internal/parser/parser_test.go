@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -34,7 +33,7 @@ func Test_Parse_ParseBlock(t *testing.T) {
 				t.Fatalf("Unexpected error: %s", err)
 			}
 
-			snaps.MatchSnapshot(t, fmt.Sprintf("Expression: %s", block.Expression.String()))
+			snaps.MatchSnapshot(t, block.String())
 		})
 	}
 }
