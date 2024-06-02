@@ -1,0 +1,8 @@
+
+[Test_Lexer_getTokenStringLiteral_UnexpectedEOF - 1]
+Unexpected EOF
+---
+
+[Test_Lexer_getToken_InvalidRune - 1]
+Invalid rune '`'
+---

@@ -1,8 +1,0 @@
-
-[Test_tokenReader_getTokenStringLiteral_UnexpectedEOF - 1]
-Unexpected EOF
----
-
-[Test_tokenReader_getToken_InvalidRune - 1]
-Invalid rune '`'
----

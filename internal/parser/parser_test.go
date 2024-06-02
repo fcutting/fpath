@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/fcutting/fpath/internal/tokreader"
+	"github.com/fcutting/fpath/internal/lexer"
 	"github.com/gkampitakis/go-snaps/snaps"
 )
 
@@ -25,8 +25,8 @@ func Test_Parse_ParseBlock(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			tr := tokreader.NewTokenReader(tc.input)
-			parser := NewParser(tr)
+			lexer := lexer.NewLexer(tc.input)
+			parser := NewParser(lexer)
 			block, err := parser.ParseBlock()
 
 			if err != nil {
@@ -49,8 +49,8 @@ func Test_Parse_ParseOperation(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			tr := tokreader.NewTokenReader(tc.input)
-			parser := NewParser(tr)
+			lexer := lexer.NewLexer(tc.input)
+			parser := NewParser(lexer)
 			operation, err := parser.ParseOperation()
 
 			if err != nil {
@@ -64,8 +64,8 @@ func Test_Parse_ParseOperation(t *testing.T) {
 
 func Test_Parse_ParseEquals(t *testing.T) {
 	input := "2"
-	tr := tokreader.NewTokenReader(input)
-	parser := NewParser(tr)
+	lexer := lexer.NewLexer(input)
+	parser := NewParser(lexer)
 	equals, err := parser.ParseEquals()
 
 	if err != nil {
@@ -86,8 +86,8 @@ func Test_Parser_ParseExpression(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			tr := tokreader.NewTokenReader(tc.input)
-			parser := NewParser(tr)
+			lexer := lexer.NewLexer(tc.input)
+			parser := NewParser(lexer)
 			expression, err := parser.ParseExpression()
 
 			if err != nil {
@@ -110,8 +110,8 @@ func Test_Parser_ParseExpression_Error(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			tr := tokreader.NewTokenReader(tc.input)
-			parser := NewParser(tr)
+			lexer := lexer.NewLexer(tc.input)
+			parser := NewParser(lexer)
 			_, err := parser.ParseExpression()
 
 			if err == nil {
@@ -137,7 +137,7 @@ func Test_parseNumber(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			numberNode, err := parseNumber(tokreader.Token{Type: tokreader.TokenType_Number, Value: tc.value})
+			numberNode, err := parseNumber(lexer.Token{Type: lexer.TokenType_Number, Value: tc.value})
 
 			if err != nil {
 				t.Fatalf("Unexpected error: %s", err)
@@ -154,21 +154,21 @@ func Test_parseNumber_Error(t *testing.T) {
 		value string
 	}{
 		"Bad float": {
-			typ:   tokreader.TokenType_Number,
+			typ:   lexer.TokenType_Number,
 			value: "123,456",
 		},
 		"Word": {
-			typ:   tokreader.TokenType_Number,
+			typ:   lexer.TokenType_Number,
 			value: "kachow",
 		},
 		"Wrong type": {
-			typ: tokreader.TokenType_OpenParan,
+			typ: lexer.TokenType_OpenParan,
 		},
 	}
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			_, err := parseNumber(tokreader.Token{Type: tc.typ, Value: tc.value})
+			_, err := parseNumber(lexer.Token{Type: tc.typ, Value: tc.value})
 
 			if err == nil {
 				t.Fatalf("Expected error but none returned")

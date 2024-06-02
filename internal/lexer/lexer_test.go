@@ -1,4 +1,4 @@
-package tokreader
+package lexer
 
 import (
 	"fmt"
@@ -73,13 +73,13 @@ func Test_isLabelRune(t *testing.T) {
 	}
 }
 
-func Test_tokenReader_getRune(t *testing.T) {
+func Test_Lexer_getRune(t *testing.T) {
 	input := "hello world"
 	expectedRunes := []rune{'h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd'}
-	tr := NewTokenReader(input)
+	lexer := NewLexer(input)
 
 	for i, expected := range expectedRunes {
-		r, err := tr.getRune()
+		r, err := lexer.getRune()
 
 		if err != nil {
 			t.Fatalf("Unexpected error: %s", err)
@@ -91,12 +91,12 @@ func Test_tokenReader_getRune(t *testing.T) {
 	}
 }
 
-func Test_tokenReader_getRune_EOF(t *testing.T) {
+func Test_Lexer_getRune_EOF(t *testing.T) {
 	input := "h"
 	expected := 'h'
-	tr := NewTokenReader(input)
+	lexer := NewLexer(input)
 
-	r, err := tr.getRune()
+	r, err := lexer.getRune()
 
 	if err != nil {
 		t.Fatalf("Unexpected error: %s", err)
@@ -107,19 +107,19 @@ func Test_tokenReader_getRune_EOF(t *testing.T) {
 	}
 
 	for i := 0; i < 100; i++ {
-		if _, err = tr.getRune(); err != io.EOF {
+		if _, err = lexer.getRune(); err != io.EOF {
 			t.Fatalf("Unexpected error: %s", err)
 		}
 	}
 }
 
-func Test_tokenReader_peekRune(t *testing.T) {
+func Test_Lexer_peekRune(t *testing.T) {
 	input := "hello world"
 	expected := 'h'
-	tr := NewTokenReader(input)
+	lexer := NewLexer(input)
 
 	for i := 0; i < 10; i++ {
-		r, err := tr.peekRune()
+		r, err := lexer.peekRune()
 
 		if err != nil {
 			t.Fatalf("Unexpected error: %s", err)
@@ -131,12 +131,12 @@ func Test_tokenReader_peekRune(t *testing.T) {
 	}
 }
 
-func Test_tokenReader_peekRune_EOF(t *testing.T) {
+func Test_Lexer_peekRune_EOF(t *testing.T) {
 	input := "h"
 	expected := 'h'
-	tr := NewTokenReader(input)
+	lexer := NewLexer(input)
 
-	r, err := tr.getRune()
+	r, err := lexer.getRune()
 
 	if err != nil {
 		t.Fatalf("Unexpected error: %s", err)
@@ -147,13 +147,13 @@ func Test_tokenReader_peekRune_EOF(t *testing.T) {
 	}
 
 	for i := 0; i < 100; i++ {
-		if _, err = tr.peekRune(); err != io.EOF {
+		if _, err = lexer.peekRune(); err != io.EOF {
 			t.Fatalf("Unexpected error: %s", err)
 		}
 	}
 }
 
-func Test_tokenReader_getToken(t *testing.T) {
+func Test_Lexer_getToken(t *testing.T) {
 	testCases := map[string]struct {
 		input          string
 		expectedTokens []Token
@@ -228,10 +228,10 @@ func Test_tokenReader_getToken(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			tr := NewTokenReader(tc.input)
+			lexer := NewLexer(tc.input)
 
 			for _, expected := range tc.expectedTokens {
-				tok, err := tr.GetToken()
+				tok, err := lexer.GetToken()
 
 				if err != nil {
 					t.Fatalf("Unexpected error: %s", err)
@@ -245,15 +245,15 @@ func Test_tokenReader_getToken(t *testing.T) {
 	}
 }
 
-func Test_tokenReader_getToken_EOF(t *testing.T) {
+func Test_Lexer_getToken_EOF(t *testing.T) {
 	input := "  123  "
 	expected := Token{
 		Type:  TokenType_Number,
 		Value: "123",
 	}
-	tr := NewTokenReader(input)
+	lexer := NewLexer(input)
 
-	tok, err := tr.GetToken()
+	tok, err := lexer.GetToken()
 
 	if err != nil {
 		t.Fatalf("Unexpected error: %s", err)
@@ -264,21 +264,21 @@ func Test_tokenReader_getToken_EOF(t *testing.T) {
 	}
 
 	for i := 0; i < 100; i++ {
-		if _, err := tr.GetToken(); err != io.EOF {
+		if _, err := lexer.GetToken(); err != io.EOF {
 			t.Fatalf("Unexpected error: %s", err)
 		}
 	}
 }
 
-func Test_tokenReader_getToken_InvalidRune(t *testing.T) {
+func Test_Lexer_getToken_InvalidRune(t *testing.T) {
 	input := "  123  `"
 	expected := Token{
 		Type:  TokenType_Number,
 		Value: "123",
 	}
-	tr := NewTokenReader(input)
+	lexer := NewLexer(input)
 
-	tok, err := tr.GetToken()
+	tok, err := lexer.GetToken()
 
 	if err != nil {
 		t.Fatalf("Unexpected error: %s", err)
@@ -288,7 +288,7 @@ func Test_tokenReader_getToken_InvalidRune(t *testing.T) {
 		t.Fatalf("Unexpected result: %s", err)
 	}
 
-	_, err = tr.GetToken()
+	_, err = lexer.GetToken()
 
 	if err == nil {
 		t.Fatalf("Error expected but not returned")
@@ -297,7 +297,7 @@ func Test_tokenReader_getToken_InvalidRune(t *testing.T) {
 	snaps.MatchSnapshot(t, err.Error())
 }
 
-func Test_tokenReader_peekToken(t *testing.T) {
+func Test_Lexer_peekToken(t *testing.T) {
 	input := "123 equals"
 	firstExpected := Token{
 		Type:  TokenType_Number,
@@ -306,12 +306,12 @@ func Test_tokenReader_peekToken(t *testing.T) {
 	secondExpected := Token{
 		Type: TokenType_Equals,
 	}
-	tr := NewTokenReader(input)
+	lexer := NewLexer(input)
 	shouldBreak := false
 
 	for i := 0; i < 100; i++ {
 		t.Run("First peek", func(t *testing.T) {
-			tok, err := tr.PeekToken()
+			tok, err := lexer.PeekToken()
 
 			if err != nil {
 				shouldBreak = true
@@ -330,7 +330,7 @@ func Test_tokenReader_peekToken(t *testing.T) {
 	}
 
 	t.Run("First get", func(t *testing.T) {
-		tok, err := tr.GetToken()
+		tok, err := lexer.GetToken()
 
 		if err != nil {
 			t.Fatalf("Unexpected error: %s", err)
@@ -343,7 +343,7 @@ func Test_tokenReader_peekToken(t *testing.T) {
 
 	for i := 0; i < 100; i++ {
 		t.Run("Second peek", func(t *testing.T) {
-			tok, err := tr.PeekToken()
+			tok, err := lexer.PeekToken()
 
 			if err != nil {
 				shouldBreak = true
@@ -362,7 +362,7 @@ func Test_tokenReader_peekToken(t *testing.T) {
 	}
 
 	t.Run("Second get", func(t *testing.T) {
-		tok, err := tr.GetToken()
+		tok, err := lexer.GetToken()
 
 		if err != nil {
 			t.Fatalf("Unexpected error: %s", err)
@@ -374,11 +374,11 @@ func Test_tokenReader_peekToken(t *testing.T) {
 	})
 }
 
-func Test_tokenReader_getTokenStringLiteral_UnexpectedEOF(t *testing.T) {
+func Test_Lexer_getTokenStringLiteral_UnexpectedEOF(t *testing.T) {
 	input := `"hello `
-	tr := NewTokenReader(input)
+	lexer := NewLexer(input)
 
-	_, err := tr.GetToken()
+	_, err := lexer.GetToken()
 
 	if err == nil {
 		t.Fatalf("Error expected but not returned")

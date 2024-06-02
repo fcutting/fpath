@@ -1,4 +1,4 @@
-package tokreader
+package lexer
 
 import (
 	"errors"
@@ -57,17 +57,17 @@ type Token struct {
 	Value string
 }
 
-// NewTokenReader returns a new TokenReader configured to read from a slice
+// NewLexer returns a new Lexer configured to read from a slice
 // []rune value of the input string.
-func NewTokenReader(input string) *TokenReader {
-	return &TokenReader{
+func NewLexer(input string) *Lexer {
+	return &Lexer{
 		input: []rune(input),
 	}
 }
 
-// TokenReader adds the functionality to get and peek tokens from a
+// Lexer adds the functionality to get and peek tokens from a
 // string using a buffer.
-type TokenReader struct {
+type Lexer struct {
 	input []rune
 	index int
 	buf   *Token
@@ -77,13 +77,13 @@ type TokenReader struct {
 // index.
 // If the index is larger than the length of the input, getRune returns an
 // io.EOF error.
-func (tr *TokenReader) getRune() (r rune, err error) {
-	if tr.index == len(tr.input) {
+func (l *Lexer) getRune() (r rune, err error) {
+	if l.index == len(l.input) {
 		return 0, io.EOF
 	}
 
-	r = tr.input[tr.index]
-	tr.index++
+	r = l.input[l.index]
+	l.index++
 	return r, nil
 }
 
@@ -91,57 +91,57 @@ func (tr *TokenReader) getRune() (r rune, err error) {
 // increment the index.
 // If the index is larger than the length of the input, peekRune returns an
 // io.EOF error.
-func (tr *TokenReader) peekRune() (r rune, err error) {
-	if tr.index == len(tr.input) {
+func (l *Lexer) peekRune() (r rune, err error) {
+	if l.index == len(l.input) {
 		return 0, io.EOF
 	}
 
-	return tr.input[tr.index], nil
+	return l.input[l.index], nil
 }
 
 // getToken returns the next token in the input string.
 // If there are no more tokens to process in the string, getToken returns an
 // io.EOF error.
-func (tr *TokenReader) GetToken() (tok Token, err error) {
-	if tr.buf != nil {
-		tok = *tr.buf
-		tr.buf = nil
+func (l *Lexer) GetToken() (tok Token, err error) {
+	if l.buf != nil {
+		tok = *l.buf
+		l.buf = nil
 		return tok, nil
 	}
 
 	var r rune
 
 	for {
-		r, err = tr.peekRune()
+		r, err = l.peekRune()
 
 		if err != nil {
 			return tok, err
 		}
 
 		if unicode.IsSpace(r) {
-			tr.index++
+			l.index++
 			continue
 		}
 
 		if unicode.IsNumber(r) {
-			return tr.getTokenNumber()
+			return l.getTokenNumber()
 		}
 
 		if isLabelRune(r) {
-			return tr.getTokenLabel()
+			return l.getTokenLabel()
 		}
 
 		switch r {
 		case '"':
-			tr.index++
-			return tr.getTokenStringLiteral()
+			l.index++
+			return l.getTokenStringLiteral()
 		case '(':
-			tr.index++
+			l.index++
 			return Token{
 				Type: TokenType_OpenParan,
 			}, nil
 		case ')':
-			tr.index++
+			l.index++
 			return Token{
 				Type: TokenType_CloseParan,
 			}, nil
@@ -156,26 +156,26 @@ func (tr *TokenReader) GetToken() (tok Token, err error) {
 // increment the index.
 // If there are no more tokens to process in the string, getToken returns an
 // io.EOF error.
-func (tr *TokenReader) PeekToken() (tok Token, err error) {
-	if tr.buf != nil {
-		tok = *tr.buf
+func (l *Lexer) PeekToken() (tok Token, err error) {
+	if l.buf != nil {
+		tok = *l.buf
 		return tok, nil
 	}
 
-	tok, err = tr.GetToken()
-	tr.buf = &tok
+	tok, err = l.GetToken()
+	l.buf = &tok
 	return tok, err
 }
 
 // getTokenNumber returns the current number token in the input string.
 // If there are no more tokens to process in the string, getToken returns an
 // io.EOF error.
-func (tr *TokenReader) getTokenNumber() (tok Token, err error) {
+func (l *Lexer) getTokenNumber() (tok Token, err error) {
 	tok.Type = TokenType_Number
 	var r rune
 
 	for {
-		r, err = tr.peekRune()
+		r, err = l.peekRune()
 
 		if err == io.EOF {
 			return tok, nil
@@ -186,7 +186,7 @@ func (tr *TokenReader) getTokenNumber() (tok Token, err error) {
 		}
 
 		if unicode.IsNumber(r) {
-			tr.index++
+			l.index++
 			tok.Value += string(r)
 			continue
 		}
@@ -198,19 +198,19 @@ func (tr *TokenReader) getTokenNumber() (tok Token, err error) {
 // getTokenLabel returns the current label token in the input string.
 // If there are no more tokens to process in the string, getToken returns an
 // io.EOF error.
-func (tr *TokenReader) getTokenLabel() (tok Token, err error) {
+func (l *Lexer) getTokenLabel() (tok Token, err error) {
 	tok.Type = TokenType_Label
 	var r rune
 
 	for {
-		r, err = tr.peekRune()
+		r, err = l.peekRune()
 
 		if err != nil {
 			break
 		}
 
 		if isLabelRune(r) {
-			tr.index++
+			l.index++
 			tok.Value += string(r)
 			continue
 		}
@@ -235,12 +235,12 @@ func (tr *TokenReader) getTokenLabel() (tok Token, err error) {
 // string.
 // If the token reaches the end of the string, getTokenStringLiteral returns an
 // UnexpectedEOF error.
-func (tr *TokenReader) getTokenStringLiteral() (tok Token, err error) {
+func (l *Lexer) getTokenStringLiteral() (tok Token, err error) {
 	tok.Type = TokenType_StringLiteral
 	var r rune
 
 	for {
-		r, err = tr.getRune()
+		r, err = l.getRune()
 
 		if err == io.EOF {
 			err = UnexpectedEOF
