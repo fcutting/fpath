@@ -56,8 +56,9 @@ func (EqualsNode) operation() {}
 // BlockNode represents an executable fpath block that contains a base
 // expression and a collection of operations to perform on the expression.
 type BlockNode struct {
-	Expression Expression
-	Operations []Operation
+	BaseExpression    Expression
+	CurrentExpression Expression
+	Operations        []Operation
 }
 
 // String returns a string representation of a BlockNode.
@@ -70,7 +71,7 @@ func (b BlockNode) String() string {
 
 	operationsString := "[" + strings.Join(operationsStrings, ", ") + "]"
 
-	return fmt.Sprintf("BlockNode{ Expression: %s, Operations: %s }", b.Expression.String(), operationsString)
+	return fmt.Sprintf("BlockNode{ BaseExpression: %s, Operations: %s }", b.BaseExpression.String(), operationsString)
 }
 
 // NumberNode represents a number literal.

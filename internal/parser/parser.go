@@ -21,7 +21,7 @@ type Parser struct {
 
 // ParseBlock returns the next block in the query.
 func (p *Parser) ParseBlock() (block BlockNode, err error) {
-	block.Expression, err = p.ParseExpression()
+	block.BaseExpression, err = p.ParseExpression()
 
 	if err != nil {
 		err = fmt.Errorf("failed to parse expression: %w", err)

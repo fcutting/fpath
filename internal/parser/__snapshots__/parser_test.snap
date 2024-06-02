@@ -1,6 +1,6 @@
 
 [Test_Parse_ParseBlock/Equals - 1]
-BlockNode{ Expression: NumberNode{ Value: 2 }, Operations: [EqualsNode{ Expression: NumberNode{ Value: 4 } }] }
+BlockNode{ BaseExpression: NumberNode{ Value: 2 }, Operations: [EqualsNode{ Expression: NumberNode{ Value: 4 } }] }
 ---
 
 [Test_Parse_ParseEquals - 1]
